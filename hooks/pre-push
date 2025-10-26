@@ -1,0 +1,17 @@
+#!/bin/sh
+
+echo "Running pre-push hook..."
+
+# Ejecutar todas las pruebas
+python -m pytest tests/
+
+# Almacenar el resultado
+RESULT=$?
+
+# Si alguna prueba falla, abortar el push
+if [ $RESULT -ne 0 ]; then
+    echo "Tests failed. Push aborted."
+    exit 1
+fi
+
+exit 0

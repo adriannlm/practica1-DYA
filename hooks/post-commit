@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# Obtener el hash del commit
+COMMIT_HASH=$(git rev-parse HEAD)
+
+# Obtener el autor del commit
+AUTHOR=$(git log -1 --format='%an <%ae>')
+
+# Obtener la fecha
+DATE=$(date '+%Y-%m-%d %H:%M:%S')
+
+# Escribir en el archivo de log
+echo "[$DATE] Commit: $COMMIT_HASH by $AUTHOR" >> commit_log.txt

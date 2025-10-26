@@ -1,0 +1,16 @@
+fastapi
+pydantic
+pydantic[email]
+uvicorn
+pytest
+requests
+psycopg2-binary
+python-dotenv
+python-multipart
+aiofiles
+httpx
+pytest-asyncio
+python-jose[cryptography]
+passlib[bcrypt]
+python-jose
+python-multipart

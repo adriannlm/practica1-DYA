@@ -1,0 +1,4 @@
+#!/bin/sh
+
+echo "Push completed successfully!"
+echo "Remember to check the GitHub Actions pipeline for CI/CD status."

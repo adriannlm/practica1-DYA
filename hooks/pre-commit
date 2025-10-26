@@ -1,0 +1,23 @@
+#!/bin/sh
+
+echo "Running pre-commit hook..."
+
+# Ejecutar black para formateo de código
+python -m black .
+
+# Ejecutar flake8 para verificar el estilo
+python -m flake8 .
+
+# Ejecutar pruebas unitarias
+python -m pytest tests/
+
+# Almacenar el resultado de las pruebas
+RESULT=$?
+
+# Si alguna prueba falla, abortar el commit
+if [ $RESULT -ne 0 ]; then
+    echo "Tests failed. Commit aborted."
+    exit 1
+fi
+
+exit 0
