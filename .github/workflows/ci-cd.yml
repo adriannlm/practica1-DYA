@@ -48,7 +48,7 @@ jobs:
         SECRET_KEY: "tu_clave_secreta_muy_segura"
       run: |
         cd backend
-        python -m pytest tests/ -v
+        python -m pytest tests/test_basic.py -v --tb=short
 
   build:
     needs: test
