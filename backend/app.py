@@ -1,22 +1,11 @@
-from fastapi import FastAPI, HTTPException, Depends, status
-from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
-from fastapi.responses import FileResponse, HTMLResponse
-from fastapi.security import OAuth2PasswordBearer, OAuth2PasswordRequestForm
-from pydantic import BaseModel, EmailStr
-from typing import List, Optional
-import psycopg2
-from psycopg2.extras import RealDictCursor
-import os
-from passlib.context import CryptContext
-import jwt
-from datetime import datetime, timedelta
-from jwt import PyJWTError
+from fastapi import FastAPI
+from fastapi.responses import JSONResponse
 
-# Configuración de seguridad
-SECRET_KEY = "tu_clave_secreta_muy_segura"  # En producción, usar variable de entorno
-ALGORITHM = "HS256"
-ACCESS_TOKEN_EXPIRE_MINUTES = 30
+app = FastAPI(title="Sistema de Gestión de Pacientes")
+
+@app.get("/")
+async def read_root():
+    return {"status": "ok", "message": "Sistema de gestión de pacientes funcionando"}
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="login")
