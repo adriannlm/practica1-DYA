@@ -38,7 +38,6 @@ jobs:
         cd backend
         python -m pip install --upgrade pip
         pip install -r requirements.txt
-        pip install pytest
 
     - name: Run tests
       env:
@@ -46,9 +45,10 @@ jobs:
         DB_NAME: clinica
         DB_USER: admin
         DB_PASS: admin
+        SECRET_KEY: "tu_clave_secreta_muy_segura"
       run: |
         cd backend
-        pytest
+        python -m pytest tests/ -v
 
   build:
     needs: test

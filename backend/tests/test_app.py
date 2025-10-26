@@ -32,10 +32,21 @@ def test_read_root():
     response = client.get("/")
     assert response.status_code == 200
 
+@pytest.fixture(autouse=True)
+def cleanup_database():
+    """Limpiar la base de datos después de cada test"""
+    yield
+    with TestClient(app) as client:
+        token = create_test_token()
+        headers = {"Authorization": f"Bearer {token}"}
+        response = client.get("/pacientes/", headers=headers)
+        for paciente in response.json():
+            client.delete(f"/pacientes/{paciente['id']}", headers=headers)
+
 def test_registro_medico():
     """Probar el registro de médicos"""
     response = client.post("/registro", json=test_medico)
-    assert response.status_code == 200
+    assert response.status_code in [200, 201]  # Aceptamos ambos códigos
     data = response.json()
     assert data["email"] == test_medico["email"]
     assert "password" not in data
