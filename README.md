@@ -1,116 +1,251 @@
-# Tech4Health Patient Management System
 
-Este proyecto implementa un sistema de gestión de pacientes para clínicas médicas, desarrollado como parte de la práctica de Automatización y Despliegue.
+# Práctica 1 - Git Hooks y CI/CD
 
-## Funcionalidades
+*Asignatura:* Despliegue y Automatización  
 
-- Registro de pacientes (nombre, edad, historial médico)
-- Consulta de pacientes por ID
-- Eliminación de pacientes
+*Alumno:* Adrián López Martín y Alejandro Rodríguez Salán  
 
-## Requisitos
+*Fecha:* 2 de noviembre de 2025  
 
-- Python 3.9+
-- FastAPI
-- Docker (para despliegue)
-- Git
+---
 
-## Instalación y Ejecución
+Este proyecto fue desarrollado para la empresa ficticia *Tech4Health*, que necesita un módulo de gestión de pacientes para clínicas médicas que desean digitalizar procesos básicos.  
 
-1. Clonar el repositorio:
-```bash
-git clone <URL_DEL_REPOSITORIO>
-cd practica1
-```
+La aplicación es un *microservicio REST* implementado con **FastAPI** que permite:  
+- Registrar pacientes (nombre, edad e historial médico).  
+- Consultar pacientes por su ID.  
+- Eliminar pacientes del sistema.  
 
-2. Instalar dependencias:
-```bash
-pip install -r requirements.txt
-```
+Además, el proyecto incorpora automatización de pruebas, control de calidad mediante hooks de Git, e integración continua con **GitHub Actions**.
 
-3. Ejecutar la aplicación:
-```bash
-uvicorn app.main:app --reload --port 5006
-```
+---
 
-La API estará disponible en `http://localhost:5006`
+## Especificaciones
 
-### Ejecución con Docker
+- *Lenguaje:* Python con FastAPI  
+- *Base de datos:* En memoria (diccionario en Python)  
+- *Framework de tests:* pytest  
+- *Automatización:* Git Hooks locales para control de calidad  
+- *CI/CD:* Workflow con GitHub Actions (test, build y despliegue con Docker)
 
-1. Construir la imagen:
-```bash
-docker build -t tech4health-api .
-```
+---
 
-2. Ejecutar el contenedor:
-```bash
-docker run -p 5006:5006 tech4health-api
-```
+## Cómo ejecutar la aplicación
 
-## Pruebas
+### Prerrequisitos
+- Python 3.10 o superior  
+- pip (gestor de paquetes de Python)  
+- Docker y Docker Compose (para el despliegue con contenedor)
 
-Para ejecutar las pruebas:
+### Ejecución local
 
-```bash
-pytest tests/
-```
+1. Instalar dependencias:
+   ```bash
+   pip install -r requirements.txt
 
-## Git Hooks
 
-El proyecto incluye los siguientes hooks:
+2. Ejecutar la aplicación:
 
-### Pre-commit
-- Verifica el formato del código con black
-- Ejecuta el linter flake8
-- Ejecuta las pruebas unitarias
+   ```bash
+   uvicorn app:app --reload
+   ```
 
-### Post-commit
-- Genera un registro en `commit_log.txt` con información del commit
+3. Acceder desde el navegador a:
 
-### Pre-push
-- Ejecuta todas las pruebas
-- Aborta el push si alguna prueba falla
+   ```
+   http://127.0.0.1:8000/docs
+   ```
 
-### Post-push
-- Muestra un mensaje de confirmación
-- Recuerda verificar el pipeline de CI/CD
+   (Incluye la documentación interactiva Swagger generada automáticamente por FastAPI)
 
-## CI/CD con GitHub Actions
+---
 
-El pipeline de CI/CD incluye:
+## Ejecución con Docker
 
-1. Ejecución de pruebas
-2. Construcción de la imagen Docker
-3. Despliegue en contenedor
+1. Construir y levantar los servicios:
 
-El workflow se ejecuta automáticamente en cada push al repositorio.
+   ```bash
+   docker-compose up --build
+   ```
 
-## Estructura del Proyecto
+2. Verificar que el contenedor está corriendo:
+
+   ```bash
+   docker ps
+   ```
+
+3. Acceder a la API desde:
+
+   ```
+   http://localhost:8000
+   ```
+
+---
+
+## Estructura del proyecto
 
 ```
-practica1/
-├── app/
-│   └── main.py
-├── tests/
-│   └── test_main.py
+Practica2/
+├── .git/
+│   └── hooks/
+│       ├── pre-commit
+│       ├── post-commit
+│       ├── pre-push
+│       └── post-push
 ├── .github/
 │   └── workflows/
 │       └── ci.yml
-├── hooks/
-├── Dockerfile
+├── docker-compose.yml
+├── app.py
 ├── requirements.txt
+├── test_basic.py
 └── README.md
 ```
 
-## API Endpoints
+---
 
-- POST `/patients/` - Crear nuevo paciente
-- GET `/patients/{id}` - Obtener paciente por ID
-- DELETE `/patients/{id}` - Eliminar paciente
-- GET `/patients/` - Listar todos los pacientes
+## Cómo se ejecutan los tests
 
-## Documentación API
+### Tests con pytest
 
-La documentación interactiva está disponible en:
-- Swagger UI: `http://localhost:5006/docs`
-- ReDoc: `http://localhost:5006/redoc`
+```bash
+pytest -v
+```
+
+### Descripción de los tests
+
+* **Tests unitarios:** verifican la creación, consulta y eliminación de pacientes.
+* **Tests de integración:** prueban las peticiones HTTP contra los endpoints del microservicio.
+* Todos los tests pasan correctamente, asegurando el funcionamiento del sistema.
+
+Ejemplo de salida esperada:
+
+```
+============================= test session starts =============================
+collected 3 items
+
+test_basic.py::test_registrar_paciente PASSED
+test_basic.py::test_consultar_paciente PASSED
+test_basic.py::test_eliminar_paciente PASSED
+============================== 3 passed in 0.42s ==============================
+```
+
+---
+
+## Qué hacen los hooks configurados
+
+El proyecto incluye 4 Git hooks locales ubicados en `.git/hooks/` que automatizan la validación del código.
+
+### 1. Pre-commit Hook
+
+*Archivo:* `.git/hooks/pre-commit`
+**Acciones automáticas:**
+
+* Verifica formato con `black`
+* Ejecuta `flake8` para linting
+* Lanza `pytest` para asegurar que todos los tests pasan
+* *Bloquea el commit* si alguna verificación falla
+
+**Cuándo se ejecuta:** antes de cada commit.
+
+---
+
+### 2. Post-commit Hook
+
+*Archivo:* `.git/hooks/post-commit`
+**Acciones automáticas:**
+
+* Registra la información del commit (autor, hash y mensaje) en `commit_log.txt`
+* Guarda la fecha y hora de la confirmación
+* Permite mantener un historial local de commits
+
+**Cuándo se ejecuta:** después de un commit exitoso.
+
+---
+
+### 3. Pre-push Hook
+
+*Archivo:* `.git/hooks/pre-push`
+**Acciones automáticas:**
+
+* Ejecuta `pytest -v` antes del envío al repositorio remoto
+* *Aborta el push* si algún test falla
+
+**Cuándo se ejecuta:** justo antes de ejecutar `git push`.
+
+---
+
+### 4. Post-push Hook
+
+*Archivo:* `.git/hooks/post-push`
+**Acciones automáticas:**
+
+* Muestra un mensaje de confirmación en consola tras un push exitoso
+* Informa del último commit enviado
+
+**Cuándo se ejecuta:** después del push.
+
+---
+
+## Pipeline CI/CD con GitHub Actions
+
+El proyecto incluye un workflow automatizado definido en `.github/workflows/ci.yml` para asegurar calidad y despliegue continuo.
+
+### ¿Cuándo se ejecuta?
+
+* En cada *push* o *pull request* a la rama `main`.
+
+### Jobs del pipeline
+
+#### 1. **Job Test**
+
+* Configura un entorno con Python 3.11.
+* Instala dependencias desde `requirements.txt`.
+* Ejecuta la suite de tests completa con pytest.
+* Si los tests fallan, el flujo se detiene.
+
+#### 2. **Job Build & Deploy**
+
+* Solo se ejecuta si el *Job Test* finaliza correctamente.
+* Construye la imagen Docker del microservicio.
+* Despliega la aplicación en un contenedor local (runner) de GitHub Actions.
+* Comprueba que el servicio responde en el puerto 8000.
+
+### Flujo completo
+
+```
+Push a main → Test → Build → Deploy → Verificación → ✅
+```
+
+### Ventajas del pipeline
+
+* Automatización completa sin intervención manual.
+* Garantía de calidad: solo se despliega código que pasa todos los tests.
+* Reproducibilidad: mismo entorno de ejecución en cada push.
+* Feedback inmediato sobre errores o fallos en integración.
+
+---
+
+## Comandos útiles
+
+```bash
+# Ejecutar la aplicación localmente
+uvicorn app:app --reload
+
+# Ejecutar los tests
+pytest -v
+
+# Detener contenedores
+docker-compose down
+
+# Ver logs de ejecución
+docker-compose logs
+```
+
+---
+
+## Enlace al repositorio de GitHub
+
+[https://github.com/adriannlm/practica1-DYA.git](https://github.com/adriannlm/practica1-DYA.git)
+
+---
